@@ -16,6 +16,7 @@ import {
 } from 'firebase/firestore'
 import { getFirestore } from 'firebase/firestore'
 import { firebaseApp } from './config'
+import type { EventType } from '../utils/eventTypes'
 
 export const db = getFirestore(firebaseApp)
 
@@ -33,9 +34,16 @@ export type SleepCycleData = {
   inProgress: boolean
 }
 
+export type EventData = {
+  type: EventType
+  timestamp: Timestamp
+  date: string
+}
+
 const userDoc = (userId: string) => doc(db, 'users', userId)
 const stateDoc = (userId: string) => doc(db, 'users', userId, 'sleepState', 'state')
 const cyclesCollection = (userId: string) => collection(db, 'users', userId, 'sleepCycles')
+const eventsCollection = (userId: string) => collection(db, 'users', userId, 'events')
 
 export async function ensureUserDocuments(userId: string) {
   const stateReference = stateDoc(userId)
@@ -94,4 +102,23 @@ export async function findActiveSleep(userId: string) {
   const activeQuery = query(cyclesCollection(userId), where('inProgress', '==', true), limit(1))
   const snapshot = await getDoc(doc(db, 'users', userId, 'sleepState', 'state'))
   return { activeQuery, stateExists: snapshot.exists() }
+}
+
+export function subscribeToEvents(userId: string, listener: (events: Array<EventData & { id: string }>) => void): Unsubscribe {
+  const eventsQuery = query(eventsCollection(userId), orderBy('timestamp', 'desc'))
+  return onSnapshot(eventsQuery, (snapshot) => {
+    listener(snapshot.docs.map((eventDoc) => ({ id: eventDoc.id, ...(eventDoc.data() as EventData) })))
+  })
+}
+
+export async function addEvent(userId: string, type: EventType, timestamp: Timestamp, date: string) {
+  await addDoc(eventsCollection(userId), { type, timestamp, date })
+}
+
+export async function updateEvent(userId: string, eventId: string, timestamp: Timestamp, date: string) {
+  await updateDoc(doc(eventsCollection(userId), eventId), { timestamp, date })
+}
+
+export async function removeEvent(userId: string, eventId: string) {
+  await deleteDoc(doc(eventsCollection(userId), eventId))
 }
