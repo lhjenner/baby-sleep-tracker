@@ -4,6 +4,7 @@ import { DatePicker } from './components/DatePicker'
 import { SleepControls } from './components/SleepControls'
 import { SleepList } from './components/SleepList'
 import { Stopwatch } from './components/Stopwatch'
+import { ThemeToggle } from './components/ThemeToggle'
 import { AuthProvider } from './context/AuthContext'
 import { SleepProvider } from './context/SleepContext'
 import { useAuth } from './hooks/useAuth'
@@ -24,9 +25,9 @@ function Tracker() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f4f1e9] text-[#24302d]">
+    <main className="min-h-screen bg-[#f4f1e9] text-[#24302d] dark:bg-[#1b2422] dark:text-[#eef1ee]">
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-4 py-6 sm:px-6 sm:py-10">
-        <header className="flex items-start justify-between gap-4"><div><p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#b56c45]">Night notes</p><h1 className="mt-1 font-display text-3xl">Baby sleep tracker</h1></div><button className="text-sm font-semibold text-[#68716b] underline underline-offset-4" type="button" onClick={() => run(signOut)}>Sign out</button></header>
+        <header className="flex items-start justify-between gap-4"><div><p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#b56c45]">Night notes</p><h1 className="mt-1 font-display text-3xl">Baby sleep tracker</h1></div><div className="flex items-center gap-3"><ThemeToggle /><button className="text-sm font-semibold text-[#68716b] underline underline-offset-4 dark:text-[#9aa89f]" type="button" onClick={() => run(signOut)}>Sign out</button></div></header>
         <DatePicker selectedDate={selectedDate} onChange={setSelectedDate} />
         <section className="space-y-3"><SleepControls inProgress={sleepState.inProgress} onStart={() => run(startSleep)} onFinish={() => run(finishSleep)} busy={busy} /><Stopwatch start={sleepState.inProgress ? sleepState.start : null} /></section>
         <SleepList cycles={cycles} selectedDate={selectedDate} onDelete={(cycle) => run(() => deleteSleep(cycle))} onEdit={(cycle, start, end) => run(() => editSleep(cycle, start, end))} />
@@ -38,7 +39,7 @@ function Tracker() {
 
 function AppContent() {
   const { user, loading } = useAuth()
-  if (loading) return <div className="flex min-h-screen items-center justify-center bg-[#f4f1e9] text-sm text-[#68716b]">Loading...</div>
+  if (loading) return <div className="flex min-h-screen items-center justify-center bg-[#f4f1e9] text-sm text-[#68716b] dark:bg-[#1b2422] dark:text-[#9aa89f]">Loading...</div>
   return user ? <SleepProvider><Tracker /></SleepProvider> : <LoginForm />
 }
 
