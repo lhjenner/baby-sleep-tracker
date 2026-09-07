@@ -30,16 +30,16 @@ export function EditSleepModal({ cycle, onSave, onClose }: EditSleepModalProps) 
   }
 
   return (
-    <div className="fixed inset-0 z-10 flex items-end justify-center bg-[#24302d]/40 p-3 sm:items-center" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose() }}>
-      <section className="w-full max-w-md rounded-3xl bg-[#fffdf8] p-6 shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="edit-sleep-title">
+    <div className="fixed inset-0 z-10 flex items-end justify-center bg-[#24302d]/40 p-3 sm:items-center dark:bg-black/60" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose() }}>
+      <section className="w-full max-w-md rounded-3xl bg-[#fffdf8] p-6 shadow-2xl dark:bg-[#233029]" role="dialog" aria-modal="true" aria-labelledby="edit-sleep-title">
         <div className="flex items-start justify-between gap-4">
           <div><p className="text-xs font-bold uppercase tracking-[0.18em] text-[#b56c45]">Adjust record</p><h2 id="edit-sleep-title" className="mt-1 font-display text-2xl">Edit sleep</h2></div>
           <button className="icon-button" type="button" aria-label="Close edit dialog" onClick={onClose}>×</button>
         </div>
         <form className="mt-6 space-y-4" onSubmit={submit}>
-          <label className="block text-sm font-semibold">Start<input className="field mt-2" type="datetime-local" value={start} onChange={(event) => setStart(event.target.value)} required /></label>
-          <label className="block text-sm font-semibold">End<input className="field mt-2" type="datetime-local" value={end} onChange={(event) => setEnd(event.target.value)} required /></label>
-          {error && <p className="text-sm text-[#913f2b]" role="alert">{error}</p>}
+          <label className="block text-sm font-semibold">Start<input className="field mt-2 [color-scheme:light] dark:[color-scheme:dark]" type="datetime-local" value={start} onChange={(event) => setStart(event.target.value)} required /></label>
+          <label className="block text-sm font-semibold">End<input className="field mt-2 [color-scheme:light] dark:[color-scheme:dark]" type="datetime-local" value={end} onChange={(event) => setEnd(event.target.value)} required /></label>
+          {error && <p className="text-sm text-[#913f2b] dark:text-[#f0a58e]" role="alert">{error}</p>}
           <div className="flex gap-3 pt-2"><button className="button-secondary flex-1" type="button" onClick={onClose}>Cancel</button><button className="button-primary flex-1" type="submit" disabled={busy}>{busy ? 'Saving...' : 'Save'}</button></div>
         </form>
       </section>

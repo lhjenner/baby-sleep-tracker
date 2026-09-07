@@ -3,13 +3,15 @@
 @tailwind utilities;
 
 :root { font-family: ui-sans-serif, system-ui, sans-serif; color: #24302d; background: #f4f1e9; font-synthesis: none; }
+:root.dark { color: #eef1ee; background: #1b2422; }
 * { box-sizing: border-box; }
 body { margin: 0; min-width: 320px; }
 button, input { font: inherit; }
 button:disabled { cursor: not-allowed; opacity: 0.45; }
 @layer components {
-  .field { @apply w-full rounded-xl border border-[#d8d2c4] bg-[#fffdf8] px-4 py-3 text-[#24302d] outline-none transition focus:border-[#b56c45] focus:ring-2 focus:ring-[#eac2ae]; }
-  .button-primary { @apply rounded-xl bg-[#b56c45] px-5 py-3 font-bold text-[#fffdf8] transition hover:bg-[#9c5838] focus:outline-none focus:ring-2 focus:ring-[#eac2ae] focus:ring-offset-2; }
-  .button-secondary { @apply rounded-xl border border-[#b7c4b4] bg-[#e7eee3] px-5 py-3 font-bold text-[#304635] transition hover:bg-[#dbe8d8] focus:outline-none focus:ring-2 focus:ring-[#b7c4b4] focus:ring-offset-2; }
-  .icon-button { @apply grid h-11 w-11 shrink-0 place-items-center rounded-full border border-[#d8d2c4] bg-[#fffdf8] text-xl text-[#24302d] transition hover:border-[#b56c45] hover:text-[#b56c45] focus:outline-none focus:ring-2 focus:ring-[#eac2ae]; }
+  .field { @apply w-full rounded-xl border border-[#d8d2c4] bg-[#fffdf8] px-4 py-3 text-[#24302d] outline-none transition focus:border-[#b56c45] focus:ring-2 focus:ring-[#eac2ae] dark:border-[#3a4a45] dark:bg-[#233029] dark:text-[#eef1ee] dark:focus:ring-[#5c3f2e]; }
+  .button-primary { @apply rounded-xl bg-[#b56c45] px-5 py-3 font-bold text-[#fffdf8] transition hover:bg-[#9c5838] focus:outline-none focus:ring-2 focus:ring-[#eac2ae] focus:ring-offset-2 dark:focus:ring-offset-[#1b2422]; }
+  .button-secondary { @apply rounded-xl border border-[#b7c4b4] bg-[#e7eee3] px-5 py-3 font-bold text-[#304635] transition hover:bg-[#dbe8d8] focus:outline-none focus:ring-2 focus:ring-[#b7c4b4] focus:ring-offset-2 dark:border-[#3f4f47] dark:bg-[#233029] dark:text-[#c9dbc4] dark:hover:bg-[#2b3a32] dark:focus:ring-offset-[#1b2422]; }
+  .icon-button { @apply grid h-11 w-11 shrink-0 place-items-center rounded-full border border-[#d8d2c4] bg-[#fffdf8] text-xl text-[#24302d] transition hover:border-[#b56c45] hover:text-[#b56c45] focus:outline-none focus:ring-2 focus:ring-[#eac2ae] dark:border-[#3a4a45] dark:bg-[#233029] dark:text-[#eef1ee] dark:hover:border-[#e4a37c] dark:hover:text-[#e4a37c]; }
 }
+
