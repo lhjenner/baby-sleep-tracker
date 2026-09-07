@@ -22,6 +22,7 @@ export const db = getFirestore(firebaseApp)
 export type SleepStateData = {
   inProgress: boolean
   start: Timestamp | null
+  cycleId?: string | null
 }
 
 export type SleepCycleData = {
@@ -48,7 +49,7 @@ export async function ensureUserDocuments(userId: string) {
 export function subscribeToSleepState(userId: string, listener: (state: SleepStateData) => void): Unsubscribe {
   return onSnapshot(stateDoc(userId), (snapshot) => {
     const data = snapshot.data() as Partial<SleepStateData> | undefined
-    listener({ inProgress: data?.inProgress ?? false, start: data?.start ?? null })
+    listener({ inProgress: data?.inProgress ?? false, start: data?.start ?? null, cycleId: data?.cycleId ?? null })
   })
 }
 
@@ -67,6 +68,11 @@ export async function startSleep(userId: string, start: Timestamp, date: string)
 export async function finishSleep(userId: string, cycleId: string, end: Timestamp, durationMs: number) {
   await setDoc(stateDoc(userId), { inProgress: false, start: null })
   await updateDoc(doc(cyclesCollection(userId), cycleId), { end, durationMs, inProgress: false })
+}
+
+export async function resumeSleep(userId: string, cycleId: string, start: Timestamp) {
+  await setDoc(stateDoc(userId), { inProgress: true, start, cycleId })
+  await updateDoc(doc(cyclesCollection(userId), cycleId), { end: null, durationMs: null, inProgress: true })
 }
 
 export async function resetSleepState(userId: string) {
