@@ -23,7 +23,7 @@ type SleepContextValue = {
   finishSleep: () => Promise<void>
   resetSleepState: () => Promise<void>
   deleteSleep: (cycle: SleepCycle) => Promise<void>
-  editSleep: (cycle: SleepCycle, start: Timestamp, end: Timestamp) => Promise<void>
+  editSleep: (cycle: SleepCycle, start: Timestamp, end: Timestamp | null) => Promise<void>
 }
 
 export const SleepContext = createContext<SleepContextValue>({
@@ -77,14 +77,24 @@ export function SleepProvider({ children }: { children: ReactNode }) {
     if (cycle.inProgress) await resetStateInFirestore(user.uid)
   }
 
-  async function editSleep(cycle: SleepCycle, start: Timestamp, end: Timestamp) {
-    if (!user || end.toMillis() < start.toMillis()) return
-    await updateSleepCycle(user.uid, cycle.id, {
-      start,
-      end,
-      date: getNzDateString(start.toDate()),
-      durationMs: end.toMillis() - start.toMillis(),
-    })
+  async function editSleep(cycle: SleepCycle, start: Timestamp, end: Timestamp | null) {
+    if (!user) return
+    if (cycle.inProgress) {
+      await updateSleepCycle(user.uid, cycle.id, {
+        start,
+        date: getNzDateString(start.toDate()),
+        inProgress: true,
+      })
+    } else {
+      if (!end || end.toMillis() < start.toMillis()) return
+      await updateSleepCycle(user.uid, cycle.id, {
+        start,
+        end,
+        date: getNzDateString(start.toDate()),
+        durationMs: end.toMillis() - start.toMillis(),
+        inProgress: false,
+      })
+    }
   }
 
   return <SleepContext.Provider value={{ sleepState, cycles, startSleep, finishSleep, resetSleepState, deleteSleep, editSleep }}>{children}</SleepContext.Provider>

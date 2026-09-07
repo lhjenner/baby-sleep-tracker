@@ -3,7 +3,7 @@ import { Timestamp } from 'firebase/firestore'
 import type { SleepCycle } from '../context/SleepContext'
 import { dateTimeLocalToTimestamp, isValidDateRange, timestampToDateTimeLocal } from '../utils/nzTime'
 
-type EditSleepModalProps = { cycle: SleepCycle; onSave: (start: Timestamp, end: Timestamp) => Promise<void>; onClose: () => void }
+type EditSleepModalProps = { cycle: SleepCycle; onSave: (start: Timestamp, end: Timestamp | null) => Promise<void>; onClose: () => void }
 
 export function EditSleepModal({ cycle, onSave, onClose }: EditSleepModalProps) {
   const [start, setStart] = useState(timestampToDateTimeLocal(cycle.start))
@@ -13,14 +13,17 @@ export function EditSleepModal({ cycle, onSave, onClose }: EditSleepModalProps) 
 
   async function submit(event: FormEvent) {
     event.preventDefault()
-    if (!end || !isValidDateRange(start, end)) {
+    if (!cycle.inProgress && (!end || !isValidDateRange(start, end))) {
       setError('End time must be after start time.')
       return
     }
     setBusy(true)
     setError('')
     try {
-      await onSave(dateTimeLocalToTimestamp(start), dateTimeLocalToTimestamp(end))
+      await onSave(
+        dateTimeLocalToTimestamp(start),
+        !cycle.inProgress && end ? dateTimeLocalToTimestamp(end) : null
+      )
       onClose()
     } catch {
       setError('Unable to save this sleep.')
@@ -38,7 +41,9 @@ export function EditSleepModal({ cycle, onSave, onClose }: EditSleepModalProps) 
         </div>
         <form className="mt-6 space-y-4" onSubmit={submit}>
           <label className="block text-sm font-semibold">Start<input className="field mt-2 [color-scheme:light] dark:[color-scheme:dark]" type="datetime-local" value={start} onChange={(event) => setStart(event.target.value)} required /></label>
-          <label className="block text-sm font-semibold">End<input className="field mt-2 [color-scheme:light] dark:[color-scheme:dark]" type="datetime-local" value={end} onChange={(event) => setEnd(event.target.value)} required /></label>
+          {!cycle.inProgress && (
+            <label className="block text-sm font-semibold">End<input className="field mt-2 [color-scheme:light] dark:[color-scheme:dark]" type="datetime-local" value={end} onChange={(event) => setEnd(event.target.value)} required /></label>
+          )}
           {error && <p className="text-sm text-[#913f2b] dark:text-[#f0a58e]" role="alert">{error}</p>}
           <div className="flex gap-3 pt-2"><button className="button-secondary flex-1" type="button" onClick={onClose}>Cancel</button><button className="button-primary flex-1" type="submit" disabled={busy}>{busy ? 'Saving...' : 'Save'}</button></div>
         </form>

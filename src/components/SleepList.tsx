@@ -1,7 +1,7 @@
 import type { SleepCycle } from '../context/SleepContext'
 import { SleepEntry } from './SleepEntry'
 
-type SleepListProps = { cycles: SleepCycle[]; selectedDate: string; onDelete: (cycle: SleepCycle) => Promise<void>; onEdit: (cycle: SleepCycle, start: import('firebase/firestore').Timestamp, end: import('firebase/firestore').Timestamp) => Promise<void> }
+type SleepListProps = { cycles: SleepCycle[]; selectedDate: string; onDelete: (cycle: SleepCycle) => Promise<void>; onEdit: (cycle: SleepCycle, start: import('firebase/firestore').Timestamp, end: import('firebase/firestore').Timestamp | null) => Promise<void> }
 
 export function SleepList({ cycles, selectedDate, onDelete, onEdit }: SleepListProps) {
   const dailyCycles = cycles.filter((cycle) => cycle.date === selectedDate).sort((left, right) => right.start.toMillis() - left.start.toMillis())
