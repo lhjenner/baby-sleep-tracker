@@ -77,8 +77,11 @@ export async function removeSleepCycle(userId: string, cycleId: string) {
   await deleteDoc(doc(cyclesCollection(userId), cycleId))
 }
 
-export async function updateSleepCycle(userId: string, cycleId: string, values: Pick<SleepCycleData, 'start' | 'end' | 'date' | 'durationMs'>) {
-  await updateDoc(doc(cyclesCollection(userId), cycleId), { ...values, inProgress: false })
+export async function updateSleepCycle(userId: string, cycleId: string, values: Partial<SleepCycleData>) {
+  await updateDoc(doc(cyclesCollection(userId), cycleId), values)
+  if (values.inProgress && values.start) {
+    await updateDoc(stateDoc(userId), { start: values.start })
+  }
 }
 
 export async function findActiveSleep(userId: string) {
