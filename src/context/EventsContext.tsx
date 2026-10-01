@@ -8,7 +8,7 @@ import {
   updateEvent as updateEventInFirestore,
   type EventData,
 } from '../firebase/firestore'
-import type { EventType } from '../utils/eventTypes'
+import type { BottleSubtype, EventType } from '../utils/eventTypes'
 import { getNzDateString } from '../utils/nzTime'
 
 export type BabyEvent = EventData & { id: string }
@@ -16,7 +16,7 @@ export type BabyEvent = EventData & { id: string }
 type EventsContextValue = {
   events: BabyEvent[]
   createEvent: (type: EventType) => Promise<void>
-  editEvent: (event: BabyEvent, timestamp: Timestamp) => Promise<void>
+  editEvent: (event: BabyEvent, timestamp: Timestamp, subtype?: BottleSubtype) => Promise<void>
   deleteEvent: (event: BabyEvent) => Promise<void>
 }
 
@@ -42,12 +42,14 @@ export function EventsProvider({ children }: { children: ReactNode }) {
   async function createEvent(type: EventType) {
     if (!user) return
     const timestamp = Timestamp.now()
-    await addEventInFirestore(user.uid, type, timestamp, getNzDateString(timestamp.toDate()))
+    const subtype = type === 'bottle' ? ('formula' as const) : undefined
+    await addEventInFirestore(user.uid, type, timestamp, getNzDateString(timestamp.toDate()), subtype)
   }
 
-  async function editEvent(event: BabyEvent, timestamp: Timestamp) {
+  async function editEvent(event: BabyEvent, timestamp: Timestamp, subtype?: BottleSubtype) {
     if (!user) return
-    await updateEventInFirestore(user.uid, event.id, timestamp, getNzDateString(timestamp.toDate()))
+    const nextSubtype = subtype ?? (event.type === 'bottle' ? (event.subtype ?? 'formula') : undefined)
+    await updateEventInFirestore(user.uid, event.id, timestamp, getNzDateString(timestamp.toDate()), nextSubtype)
   }
 
   async function deleteEvent(event: BabyEvent) {

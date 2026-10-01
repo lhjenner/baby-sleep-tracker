@@ -4,7 +4,7 @@ type EventButtonsProps = { onCreate: (type: EventType) => void; busy: boolean }
 
 export function EventButtons({ onCreate, busy }: EventButtonsProps) {
   return (
-    <div className="grid grid-cols-4 gap-2">
+    <div className="grid grid-cols-5 gap-2">
       {EVENT_TYPES.map((type) => (
         <button
           key={type}
