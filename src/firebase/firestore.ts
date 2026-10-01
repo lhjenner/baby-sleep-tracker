@@ -16,7 +16,7 @@ import {
 } from 'firebase/firestore'
 import { getFirestore } from 'firebase/firestore'
 import { firebaseApp } from './config'
-import type { EventType } from '../utils/eventTypes'
+import type { BottleSubtype, EventType } from '../utils/eventTypes'
 
 export const db = getFirestore(firebaseApp)
 
@@ -38,6 +38,7 @@ export type EventData = {
   type: EventType
   timestamp: Timestamp
   date: string
+  subtype?: BottleSubtype
 }
 
 const userDoc = (userId: string) => doc(db, 'users', userId)
@@ -111,12 +112,32 @@ export function subscribeToEvents(userId: string, listener: (events: Array<Event
   })
 }
 
-export async function addEvent(userId: string, type: EventType, timestamp: Timestamp, date: string) {
-  await addDoc(eventsCollection(userId), { type, timestamp, date })
+export async function addEvent(
+  userId: string,
+  type: EventType,
+  timestamp: Timestamp,
+  date: string,
+  subtype?: BottleSubtype
+) {
+  const data: EventData = { type, timestamp, date }
+  if (subtype !== undefined) {
+    data.subtype = subtype
+  }
+  await addDoc(eventsCollection(userId), data)
 }
 
-export async function updateEvent(userId: string, eventId: string, timestamp: Timestamp, date: string) {
-  await updateDoc(doc(eventsCollection(userId), eventId), { timestamp, date })
+export async function updateEvent(
+  userId: string,
+  eventId: string,
+  timestamp: Timestamp,
+  date: string,
+  subtype?: BottleSubtype
+) {
+  const updateData: Partial<EventData> = { timestamp, date }
+  if (subtype !== undefined) {
+    updateData.subtype = subtype
+  }
+  await updateDoc(doc(eventsCollection(userId), eventId), updateData)
 }
 
 export async function removeEvent(userId: string, eventId: string) {

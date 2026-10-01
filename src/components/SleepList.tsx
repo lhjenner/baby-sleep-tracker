@@ -1,6 +1,7 @@
 import type { Timestamp } from 'firebase/firestore'
 import type { SleepCycle } from '../context/SleepContext'
 import type { BabyEvent } from '../context/EventsContext'
+import type { BottleSubtype } from '../utils/eventTypes'
 import { resumeSleep } from '../firebase/firestore'
 import { useAuth } from '../hooks/useAuth'
 import { useSleepState } from '../hooks/useSleepState'
@@ -14,7 +15,7 @@ type SleepListProps = {
   onDelete: (cycle: SleepCycle) => Promise<void>
   onEdit: (cycle: SleepCycle, start: Timestamp, end: Timestamp | null) => Promise<void>
   onDeleteEvent: (event: BabyEvent) => Promise<void>
-  onEditEvent: (event: BabyEvent, timestamp: Timestamp) => Promise<void>
+  onEditEvent: (event: BabyEvent, timestamp: Timestamp, subtype?: BottleSubtype) => Promise<void>
 }
 
 type DailyItem = { kind: 'sleep'; time: number; cycle: SleepCycle } | { kind: 'event'; time: number; event: BabyEvent }

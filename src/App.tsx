@@ -56,7 +56,7 @@ function Tracker() {
           onDelete={(cycle) => run(() => deleteSleep(cycle))}
           onEdit={(cycle, start, end) => run(() => editSleep(cycle, start, end))}
           onDeleteEvent={(event) => run(() => deleteEvent(event))}
-          onEditEvent={(event, timestamp) => run(() => editEvent(event, timestamp))}
+          onEditEvent={(event, timestamp, subtype) => run(() => editEvent(event, timestamp, subtype))}
         />
         <p className="text-center text-xs text-[#8a9189]">{user?.email}</p>
       </div>
